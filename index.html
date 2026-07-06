@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador Financeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <header class="header">
+    <div class="container header-inner">
+      <div>
+        <div class="header-title">
+          <span>💻</span>
+          <h1>Simulador Financeiro</h1>
+        </div>
+        <p class="header-sub">
+          Meta: <span class="mono">R$ 4.800</span> em 12 meses ·
+          Salário: <span class="mono">R$ 2.500/mês</span>
+        </p>
+      </div>
+      <button class="btn-reset" id="btnReset">Resetar</button>
+    </div>
+  </header>
+
+  <nav class="tabs-bar">
+    <div class="container tabs-inner">
+      <button class="tab active" data-tab="simulador">Simulador</button>
+      <button class="tab" data-tab="evolucao">Evolução</button>
+      <button class="tab" data-tab="respostas">Respostas</button>
+    </div>
+  </nav>
+
+  <main class="container main-content">
+
+    <!-- SIMULADOR -->
+    <section id="tab-simulador" class="tab-panel active">
+      <div class="grid-2col">
+        <div class="card">
+          <h2>Ajuste suas despesas</h2>
+          <p class="card-sub">Arraste os controles para simular diferentes cenários.</p>
+          <div id="sliders-container"></div>
+        </div>
+        <div class="summary-col">
+          <div class="card balance-card" id="balanceCard">
+            <p class="label-upper">Saldo mensal</p>
+            <p class="balance-value mono" id="balanceValue">R$ 100,00</p>
+            <p class="balance-sub">Necessário: <span class="mono">R$ 400,00/mês</span></p>
+          </div>
+          <div class="card">
+            <p class="label-upper">Meta do notebook</p>
+            <div class="goal-row">
+              <span>Economia em 12 meses</span>
+              <span class="mono" id="savings12">R$ 1.200,00</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="goal-status" id="goalStatus"></p>
+          </div>
+          <div class="card stats-grid">
+            <div class="stat"><p class="stat-label">Total despesas</p><p class="stat-value mono" id="statTotal"></p></div>
+            <div class="stat"><p class="stat-label">Meses para meta</p><p class="stat-value mono" id="statMonths"></p></div>
+            <div class="stat"><p class="stat-label">% salário gasto</p><p class="stat-value mono" id="statPctSpent"></p></div>
+            <div class="stat"><p class="stat-label">% economizado</p><p class="stat-value mono" id="statPctSaved"></p></div>
+          </div>
+          <div class="card">
+            <p class="label-upper">Distribuição de despesas</p>
+            <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVOLUÇÃO -->
+    <section id="tab-evolucao" class="tab-panel">
+      <div class="card">
+        <h2>Evolução da economia ao longo do ano</h2>
+        <p class="card-sub">Saldo atual: <span class="mono" id="lineBalance"></span>/mês</p>
+        <div class="chart-wrap chart-wrap--tall"><canvas id="lineChart"></canvas></div>
+        <div class="milestones" id="milestones"></div>
+      </div>
+      <div class="card" style="margin-top:1.5rem">
+        <h2>Comparação de cenários</h2>
+        <div class="table-wrap">
+          <table id="scenarioTable">
+            <thead>
+              <tr>
+                <th>Cenário</th>
+                <th class="right">Saldo/mês</th>
+                <th class="right">Em 12 meses</th>
+                <th class="right">Meses p/ meta</th>
+                <th class="right">Status</th>
+              </tr>
+            </thead>
+            <tbody id="scenarioBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESPOSTAS -->
+    <section id="tab-respostas" class="tab-panel">
+      <div class="answers-col">
+        <div class="card answer-card">
+          <div class="answer-head"><span class="answer-num">1</span><h3>Quanto a pessoa precisa economizar por mês?</h3></div>
+          <span class="badge badge--green">R$ 400/mês</span>
+          <p>Para comprar o notebook de R$ 4.800 em 12 meses, a pessoa precisa economizar <strong>R$ 400 por mês</strong> (R$ 4.800 ÷ 12 = R$ 400/mês).</p>
+        </div>
+        <div class="card answer-card">
+          <div class="answer-head"><span class="answer-num">2</span><h3>Com o orçamento atual, ela consegue atingir a meta?</h3></div>
+          <span class="badge badge--red">Não consegue</span>
+          <p>Não. O saldo é de apenas <strong>R$ 100/mês</strong>. Em 12 meses economizaria <strong>R$ 1.200</strong> — muito abaixo dos R$ 4.800 necessários.</p>
+        </div>
+        <div class="card answer-card">
+          <div class="answer-head"><span class="answer-num">3</span><h3>Quais despesas poderiam ser reduzidas?</h3></div>
+          <span class="badge badge--green">Lazer, supermercado e assinaturas</span>
+          <ul>
+            <li><strong>Lazer</strong> R$ 350 → R$ 150: economia de R$ 200</li>
+            <li><strong>Supermercado</strong> R$ 750 → R$ 600: economia de R$ 150</li>
+            <li><strong>Assinaturas</strong> R$ 100 → R$ 0: economia de R$ 100</li>
+            <li><strong>Internet/celular</strong> R$ 150 → R$ 100: economia de R$ 50</li>
+          </ul>
+        </div>
+        <div class="card answer-card">
+          <div class="answer-head"><span class="answer-num">4</span><h3>Como um programa ajuda a simular cenários?</h3></div>
+          <span class="badge badge--green">Automatiza cálculos e visualiza cenários</span>
+          <ul>
+            <li>Recalcula o saldo automaticamente a cada ajuste</li>
+            <li>Visualiza graficamente a evolução mês a mês</li>
+            <li>Compara múltiplos cenários lado a lado</li>
+            <li>Identifica quais cortes fazem mais diferença</li>
+          </ul>
+        </div>
+        <div class="card conclusion-card">
+          <p class="conclusion-title">💡 Conclusão</p>
+          <p>Use a aba <strong>Simulador</strong> para ajustar despesas em tempo real. Na aba <strong>Evolução</strong>, compare cenários e veja o crescimento da economia mês a mês.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
